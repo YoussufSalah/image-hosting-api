@@ -4,6 +4,9 @@ dotenv.config();
 import express from "express";
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded());
+
 import indexRoutes from "./routes/index.routes.js";
 app.use(indexRoutes);
 
