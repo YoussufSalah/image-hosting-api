@@ -40,7 +40,7 @@ A simple backend API for uploading, retrieving, and deleting images using **Supa
 3. Set environment variables in `.env`:
     ```ini
     SUPABASE_URL=your_supabase_url
-    SUPABASE_KEY=your_supabase_anon_or_service_role_key
+    SUPABASE_ANON_ROLE_KEY=your_supabase_anon_or_service_role_key
     ```
 4. Run the server:
     ```bash
