@@ -46,28 +46,46 @@ const softDeleteImage = async (req, res, next) => {
 
 const deleteImage = async (req, res, next) => {
     try {
-        const { data, error } = await supabase
+        // Fetch the image record first
+        const { data: image, error: fetchError } = await supabase
+            .from("images")
+            .select("*")
+            .eq("id", req.params.id)
+            .single();
+
+        if (fetchError) throw fetchError;
+        if (!image) {
+            return res.status(404).json({
+                status: "fail",
+                msg: `Can't find an image with ID: ${req.params.id}`,
+            });
+        }
+
+        // Delete the file from Supabase bucket
+        const fileName = image.public_url.split("/").pop();
+        const { error: deleteFileError } = await supabase.storage
+            .from("images")
+            .remove([fileName]);
+
+        if (deleteFileError) throw deleteFileError;
+
+        // Delete the DB record
+        const { data: deletedData, error: deleteDBError } = await supabase
             .from("images")
             .delete()
             .eq("id", req.params.id)
             .select()
             .single();
 
-        if (!data)
-            return res.status(404).json({
-                status: "fail",
-                msg: `Can't find an image with ID: ${req.params.id}`,
-            });
-
-        if (error) throw error;
+        if (deleteDBError) throw deleteDBError;
 
         res.status(200).json({
             status: "success",
-            msg: "Image got deleted successfully.",
-            image: data,
+            msg: "Image deleted successfully (file + record).",
+            image: deletedData,
         });
     } catch (err) {
-        console.log(err);
+        console.error(err);
         return next(err);
     }
 };
