@@ -11,3 +11,4 @@ CREATE TABLE IF NOT EXISTS images (
 -- Supabase storage buckets are created via API/UI, but using SQL you can set policies after creation
 -- Bucket name: images
 -- Public access (anyone can read)
+-- Allowed MIME Types: image/jpeg, image/png, image/webp, image/avif, image/gif
